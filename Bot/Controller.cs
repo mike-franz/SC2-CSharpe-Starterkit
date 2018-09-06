@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Threading;
+using Bot.Models;
 using SC2APIProtocol;
 using Action = SC2APIProtocol.Action;
 // ReSharper disable MemberCanBePrivate.Global
@@ -26,6 +28,7 @@ namespace Bot {
         public static uint maxSupply;
         public static uint minerals;
         public static uint vespene;
+        public static List<Unit> resourceCenters = new List<Unit>();
 
         public static readonly List<Vector3> enemyLocations = new List<Vector3>();
         public static readonly List<string> chatLog = new List<string>();
@@ -72,9 +75,10 @@ namespace Bot {
 
             //initialization
             if (frame == 0) {
-                var resourceCenters = GetUnits(Units.ResourceCenters);
+                resourceCenters = GetUnits(Units.ResourceCenters);
                 if (resourceCenters.Count > 0) {
                     var rcPosition = resourceCenters[0].position;
+
 
                     foreach (var startLocation in gameInfo.StartRaw.StartLocations) {
                         var enemyLocation = new Vector3(startLocation.X, startLocation.Y, 0);
@@ -255,8 +259,7 @@ namespace Bot {
                 return (result.Result.Placements[0].Result == ActionResult.Success);
             return false;
         }
-
-
+      
         public static void DistributeWorkers() {            
             var workers = GetUnits(Units.Workers);
             List<Unit> idleWorkers = new List<Unit>();
@@ -326,6 +329,11 @@ namespace Bot {
             return null;
         }
 
+        public static Unit GetAvailableWorker() {
+            var workers = GetUnits(Units.Workers);
+            return workers.First();
+        }
+
         public static bool IsInRange(Vector3 targetPosition, List<Unit> units, float maxDistance) {
             return (GetFirstInRange(targetPosition, units, maxDistance) != null);
         }
@@ -338,6 +346,27 @@ namespace Bot {
                     return unit;
             }
             return null;
+        }
+
+        public static void Construct(uint unitType, Vector3 position)
+        {
+            var worker = GetAvailableWorker();
+            if (worker == null) {
+                Logger.Error("Unable to find worker to construct: {0}", GetUnitName(unitType));
+                return;
+            }
+
+            var abilityID = Abilities.GetID(unitType);
+            var constructAction = CreateRawUnitCommand(abilityID);
+            constructAction.ActionRaw.UnitCommand.UnitTags.Add(worker.tag);
+            constructAction.ActionRaw.UnitCommand.TargetWorldSpacePos = new Point2D
+            {
+                X = position.X,
+                Y = position.Y
+            };
+            AddAction(constructAction);
+
+            Logger.Info("Constructing: {0} @ {1} / {2}", GetUnitName(unitType), position.X, position.Y);
         }
 
         public static void Construct(uint unitType) {
@@ -387,5 +416,18 @@ namespace Bot {
         }
 
 
+        public static Unit GetScvFromMineralMining()
+        {
+            var scvs = Controller.GetUnits(Units.SCV);
+            var scv = scvs.First(s =>
+                s.order.AbilityId == Abilities.GATHER_MINERALS || s.order.AbilityId == Abilities.RETURN_MINERALS);
+
+            return scv;
+        }
+
+        public static uint GetMineralCount()
+        {
+            return obs.Observation.PlayerCommon.Minerals;
+        }
     }
 }

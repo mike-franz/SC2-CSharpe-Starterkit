@@ -4,6 +4,9 @@ using System.IO;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Bot.Services;
+using Google.Protobuf;
+using Newtonsoft.Json;
 using SC2APIProtocol;
 
 namespace Bot {
@@ -165,7 +168,7 @@ namespace Bot {
             return response.Query;
         }
 
-        private async Task Run(Bot bot, uint playerId) {
+        private async Task Run(AIService aiService, uint playerId) {
             var gameInfoReq = new Request();
             gameInfoReq.GameInfo = new RequestGameInfo();
 
@@ -184,6 +187,11 @@ namespace Bot {
             Controller.gameInfo = gameInfoResponse.GameInfo;
             Controller.gameData = dataResponse.Data;
 
+            if (Controller.gameInfo == null)
+            {
+                File.WriteAllText(@"D:\GitProjects\SC2-CSharpe-Starterkit\gameInfoResponse.json",JsonConvert.SerializeObject(gameInfoResponse));
+            }
+
             while (true) {
                 var observationRequest = new Request();
                 observationRequest.Observation = new RequestObservation();
@@ -195,7 +203,7 @@ namespace Bot {
                     break;
 
                 Controller.obs = observation;
-                var actions = bot.OnFrame();
+                var actions = aiService.Frame();
 
                 var actionRequest = new Request();
                 actionRequest.Action = new RequestAction();
@@ -210,7 +218,7 @@ namespace Bot {
             }
         }
 
-        public async Task RunSinglePlayer(Bot bot, string map, Race myRace, Race opponentRace,
+        public async Task RunSinglePlayer(AIService aiService, string map, Race myRace, Race opponentRace,
             Difficulty opponentDifficulty) {
             var port = 5678;
             Logger.Info("Starting SinglePlayer Instance");
@@ -221,19 +229,19 @@ namespace Bot {
             await CreateGame(map, opponentRace, opponentDifficulty);
             Logger.Info("Joining game");
             var playerId = await JoinGame(myRace);
-            await Run(bot, playerId);
+            await Run(aiService, playerId);
         }
 
-        private async Task RunLadder(Bot bot, Race myRace, int gamePort, int startPort) {
+        private async Task RunLadder(AIService aiService, Race myRace, int gamePort, int startPort) {
             await Connect(gamePort);
             var playerId = await JoinGameLadder(myRace, startPort);
-            await Run(bot, playerId);
+            await Run(aiService, playerId);
             await RequestLeaveGame();
         }
 
-        public async Task RunLadder(Bot bot, Race myRace, string[] args) {
+        public async Task RunLadder(AIService aiService, Race myRace, string[] args) {
             var commandLineArgs = new CLArgs(args);
-            await RunLadder(bot, myRace, commandLineArgs.GamePort, commandLineArgs.StartPort);
+            await RunLadder(aiService, myRace, commandLineArgs.GamePort, commandLineArgs.StartPort);
         }
     }
 }

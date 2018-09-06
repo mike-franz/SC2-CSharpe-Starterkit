@@ -1,10 +1,12 @@
 ﻿using System;
+using Bot.AIs;
+using Bot.Services;
 using SC2APIProtocol;
 
 namespace Bot {
     internal class Program {
         // Settings for your bot.
-        private static readonly Bot bot = new RaxBot();
+        private static readonly AIService engineService = new AIService();
         private const Race race = Race.Terran;
 
         // Settings for single player mode.
@@ -21,10 +23,11 @@ namespace Bot {
         private static void Main(string[] args) {
             try {
                 gc = new GameConnection();
+
                 if (args.Length == 0)
-                    gc.RunSinglePlayer(bot, mapName, race, opponentRace, opponentDifficulty).Wait();
+                    gc.RunSinglePlayer(engineService, mapName, race, opponentRace, opponentDifficulty).Wait();
                 else
-                    gc.RunLadder(bot, race, args).Wait();
+                    gc.RunLadder(engineService, race, args).Wait();
             }
             catch (Exception ex) {
                 Logger.Info(ex.ToString());

@@ -39,7 +39,9 @@ namespace Bot {
         public static int TRANSFORM_TO_HELLION = 1978;
         public static int UNLOAD_BUNKER = 408;
         public static int SALVAGE_BUNKER = 32;
-        
+
+        public static int COMMAND_CENTER_TRAIN_SCV = 524;
+
         //gathering/returning minerals
         public static int GATHER_RESOURCES = 295;
         public static int RETURN_RESOURCES = 296;

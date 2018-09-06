@@ -1,0 +1,22 @@
+{
+	"steps": [
+		{
+		   "minScvCount": 14,
+		   "type": "Build",
+		   "buildUnit": "SupplyDepo",
+		   "requiredLocation": "MainBaseWallDepo1"
+		},
+		{
+		   "minScvCount": 16,
+		   "type": "Build",
+		   "buildUnit": "Barracks",
+		   "requiredLocation": "MainBaseWallProduction"
+		},
+		{
+		   "minScvCount": 22,
+		   "type": "Build",
+		   "buildUnit": "SupplyDepo",
+		   "requiredLocation": "MainBaseWallDepo2"
+		}
+	]
+}

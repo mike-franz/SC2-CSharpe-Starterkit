@@ -1,0 +1,44 @@
+{
+   "startingLocations":  [
+     { "id": 1, "x": 25.5, "y": 26.5, "z": 11.98438},
+     { "id": 2, "x": 134.5, "y": 145.5, "z": 11.98438}
+   ],
+	 "strategicPoints":  [
+      { 
+        "key": "MainBaseWallDepo1",
+        "startingLocation":  1,
+        "x":  32,
+        "y":  43
+      },
+      { 
+        "key": "MainBaseWallDepo2",
+        "startingLocation":  1,
+        "x":  35,
+        "y": 46
+      },
+      { 
+        "key": "MainBaseWallProduction",
+        "startingLocation":  1,
+        "x": 34,
+        "y":  43
+      },
+      { 
+        "key": "MainBaseWallDepo1",
+        "startingLocation":  2,
+        "x":  128,
+        "y":  129
+      },
+      { 
+        "key": "MainBaseWallDepo2",
+        "startingLocation":  2,
+        "x":  125.5,
+        "y": 128.5
+      },
+      { 
+        "key": "MainBaseWallProduction",
+        "startingLocation":  2,
+        "x": 125,
+        "y":  130
+      }
+	 ]
+}

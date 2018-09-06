@@ -36,6 +36,9 @@
       <HintPath>..\References\Google.Protobuf.dll</HintPath>
     </Reference>
     <Reference Include="netstandard" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -48,8 +51,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abilities.cs" />
+    <Compile Include="AIs\EarlyGameEconomyAI.cs" />
+    <Compile Include="AIs\TwoOneOneBuildOrder.cs" />
     <Compile Include="Controller.cs" />
+    <Compile Include="Helpers\EmbededResourceHelper.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Models\BuildOrder.cs" />
+    <Compile Include="Models\EarlyGameScout.cs" />
+    <Compile Include="Models\StartingLocation.cs" />
+    <Compile Include="Models\StrategicMapDetails.cs" />
+    <Compile Include="Models\StrategicPoint.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Protocol\Common.cs" />
     <Compile Include="Protocol\Data.cs" />
@@ -61,6 +72,8 @@
     <Compile Include="Protocol\Score.cs" />
     <Compile Include="Protocol\Spatial.cs" />
     <Compile Include="Protocol\Ui.cs" />
+    <Compile Include="Services\AIService.cs" />
+    <Compile Include="Services\UnitService.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="Wrapper\Interface.cs" />
     <Compile Include="Wrapper\CommandLine.cs" />
@@ -68,6 +81,11 @@
     <Compile Include="Wrapper\ProtobufProxy.cs" />
     <Compile Include="Units.cs" />
     <Compile Include="RaxBot.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BuildOrders\2-1-1.json" />
+    <EmbeddedResource Include="MapDetails\16BitLE.json" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,9 +1,18 @@
 ﻿using System.Collections.Generic;
+using Bot.Models;
 using SC2APIProtocol;
 
 namespace Bot {
-    internal class RaxBot : Bot {
-        
+    internal class RaxBot
+    {
+
+        private EarlyGameScout _scout;
+
+        public RaxBot()
+        {
+            _scout = null;
+        }
+
         //the following will be called every frame
         //you can increase the amount of frames that get processed for each step at once in Wrapper/GameConnection.cs: stepSize  
         public IEnumerable<Action> OnFrame() {
@@ -19,6 +28,8 @@ namespace Bot {
             if (Controller.frame == Controller.SecsToFrames(1)) 
                 Controller.Chat("gl hf");
 
+            
+
             var structures = Controller.GetUnits(Units.Structures);
             if (structures.Count == 1) {
                 //last building                
@@ -32,8 +43,29 @@ namespace Bot {
                 if (Controller.CanConstruct(Units.SCV))
                     rc.Train(Units.SCV);
             }
-            
-            
+
+
+            if (_scout == null)
+            {
+                var scvOffMineralLine = Controller.GetScvFromMineralMining();
+                if (scvOffMineralLine == null)
+                {
+                    Logger.Info($"Could not find scvOffMineralLine");
+                    
+                }
+                else
+                {
+                    Logger.Info($"Scv scount found: {scvOffMineralLine.name} ");
+                }
+                
+                _scout = new EarlyGameScout(scvOffMineralLine);
+            }
+
+            if (_scout.IsAlive() && !_scout.IsScouting())
+            {
+                _scout.Scout();
+            }
+
             //keep on buildings depots if supply is tight
             if (Controller.maxSupply - Controller.currentSupply <= 5)
                 if (Controller.CanConstruct(Units.SUPPLY_DEPOT))
